@@ -36,7 +36,7 @@ inline std::string hex_to_binary(std::string hex) {
 const string circuit_file_location = macro_xstr(EMP_CIRCUIT_PATH);
 
 template<typename T>
-void test(int party, T* io, string name, string check_output = "") {
+void test(int party, T* io, string name, string check_output = "", const char * flag="") {
 	string file = name;//circuit_file_location + name;
 	CircuitFile cf(file.c_str());
 	auto t1 = clock_start();
@@ -57,15 +57,18 @@ void test(int party, T* io, string name, string check_output = "") {
 	bool *in = new bool[max(cf.n1, cf.n2)];
 	bool * out = new bool[cf.n3];
 	memset(in, false, max(cf.n1, cf.n2));
+	memcpy(in, flag, 30);
 	memset(out, false, cf.n3);
 	t1 = clock_start();
 	twopc.online(in, out);
+	cout << (char *)in << endl;
 	cout << "online:\t"<<party<<"\t"<<time_from(t1)<<endl;
-	if(party == BOB and check_output.size() > 0){
+	if(party == BOB /* and check_output.size() > 0*/){
 		string res = "";
 		for(int i = 0; i < cf.n3; ++i)
 			res += (out[i]?"1":"0");
-		cout << (res == hex_to_binary(check_output)? "GOOD!":"BAD!")<<endl;
+		cout << res << endl;
+		// cout << (res == hex_to_binary(check_output)? "GOOD!":"BAD!")<<endl;
 	}
 	delete[] in;
 	delete[] out;

@@ -8,7 +8,19 @@ int main(int argc, char** argv) {
 	parse_party_and_port(argv, &party, &port);
 	NetIO* io = new NetIO(party==ALICE ? nullptr:IP, port);
 //	io->set_nodelay();
-	test(party, io, circuit_file_location+"sha-256.txt", "da5698be17b9b46962335799779fbeca8ce5d491c0d26243bafef9ea1837a9d8");
+
+	string data;
+	if (party == ALICE)
+	{
+		ifstream in("./flag1.txt");
+		getline(in, data);
+	} else if (party == BOB) {
+		ifstream in("./flag2.txt");
+		getline(in, data);
+	}
+
+	const char * flag = data.c_str();
+	test(party, io, "/home/chuan/git/emp-ag2pc/bin/circuit.txt", "", flag); 
 	delete io;
 	return 0;
 }
